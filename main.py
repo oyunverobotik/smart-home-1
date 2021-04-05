@@ -27,15 +27,28 @@ def on_button_pressed_b():
     global v
     v = v - 0.2
     music.play_melody("C5 B A G F E D C ", 1200)
-    goAhead(180, 200, images.arrow_image(ArrowNames.NORTH))
+    goAhead(210, 200, images.arrow_image(ArrowNames.NORTH))
 input.on_button_pressed(Button.B, on_button_pressed_b)
 
 def rotateDegrees(num: number, repeat: number):
-    index = 0
+    global index
     while index <= repeat:
         SuperBit.stepper_degree(SuperBit.enSteppers.B2, num)
         basic.pause(500)
         index += 1
+distance = 0
+index = 0
 v = 0
-
 WSJoyStick.joy_stick_init()
+
+def on_forever():
+    global distance
+    distance = sonar.ping(DigitalPin.P0, DigitalPin.P1, PingUnit.CENTIMETERS)
+    if distance < 10:
+        music.play_tone(262, music.beat(BeatFraction.WHOLE))
+        basic.show_icon(IconNames.HEART)
+        goAhead(0, 0, images.arrow_image(ArrowNames.EAST))
+    else:
+        basic.show_icon(IconNames.TORTOISE)
+        goAhead(210, 200, images.arrow_image(ArrowNames.WEST))
+basic.forever(on_forever)
